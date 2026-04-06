@@ -35,12 +35,12 @@ public:
     /**
      * @brief Проверка на равенство оператора
      */
-    bool operator==(Point p) const;
+    bool operator==(const Point& p) const;
 
     /**
      * @brief Проверка на неравенство оператора
      */
-    bool operator!=(Point p) const;
+    bool operator!=(const Point& p) const;
 
     /**
      * @brief Расстояние между двумя точками
