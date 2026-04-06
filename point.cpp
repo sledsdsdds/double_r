@@ -17,28 +17,15 @@ double Point::getY() const
     return this->y;
 }
 
-bool Point::operator==(Point p) const
+bool Point::operator==(const Point& p) const
 {
-    if (this->x == p.x && this->y == p.y)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    const double eps = 1e-9;
+    return (std::abs(this->x - p.x) < eps && std::abs(this->y - p.y) < eps);
 }
 
-bool Point::operator!=(Point p) const
+bool Point::operator!=(const Point& p) const
 {
-    if (this->x != p.x || this->y != p.y)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return !(*this == p);
 }
 
 double Point::distanceTo(const Point& other) const
