@@ -3,11 +3,8 @@
 #include <cstdlib>
 #include "Queue.h"
 
-using namespace std;
+int getValue(std::string report = "");
 
-/**
- * @brief Нумерация объектов выбора
- */
 enum Actions
 {
     ENQUEUE = 1,
@@ -17,121 +14,106 @@ enum Actions
     EXIT
 };
 
-/**
- * @brief Выводит ошибку и завершает работу программы
- * @param text - текст, выводимый на экран
- */
-void ERROR(const string text)
-{
-    cerr << text << endl;
-    exit(1);
-}
-
-/**
- * @brief Считывает значение, введенное с клавиатуры
- * @return считанное значение
- */
-int get_choice()
-{
-    int number = 0;
-    cin >> number;
-    if (cin.fail())
-    {
-        ERROR("Input error");
-    }
-    return number;
-}
-
-/**
- * @brief Точка входа в программу
- * @return Если программа выполнена корректно - 0, иначе 1
- */
 int main()
 {
-    Queue collection;
-
-    cout << "Specify the initial number of queue items: ";
-    int n = get_choice();
-
-    if (n < 0)
-    {
-        ERROR("Error: The number of elements cannot be negative");
-    }
-
-    if (n > 0)
-    {
-        cout << "Enter " << n << " queue elements: " << endl;
-        for (size_t i = 0; i < static_cast<size_t>(n); ++i)
-        {
-            int val = get_choice();
-            collection.enqueue(val);
-        }
-    }
-
-    cout << "The initial queue: " << collection << endl;
-    cout << "Queue size: " << collection.get_size() << endl;
-
+    Queue<int> queue;
     int choice = 0;
+    
+    std::cout << "Queue Demo (max size = 10) \n" << std::endl;
+    
+    std::cout << "enter initial number of elements (max 10): ";
+    int n = getValue();
+    
+    if (n < 0 || n > 10)
+    {
+        std::cout << "error. number must be between 0 and 10.\n";
+        return 1;
+    }
+    
+    for (int i = 0; i < n; ++i)
+    {
+        int val = getValue("enter element: ");
+        queue.enqueue(val);
+    }
+    
+    queue.print();
+    std::cout << "size: " << queue.getSize() << std::endl;
+    
     while (choice != EXIT)
     {
-        cout << "\nSelect an action with a queue: " << endl
-            << ENQUEUE << " - Add an element to the end (enqueue)" << endl
-            << DEQUEUE << " - Remove an element from the beginning (dequeue)" << endl
-            << PEEK << " - View the head element (peek)" << endl
-            << CLEAR << " - Clear the queue" << endl
-            << EXIT << " - Exit" << endl;
-        cout << "Your choice: ";
-        choice = get_choice();
-
-        try
+        std::cout << "\nchoose action:" << std::endl;
+        std::cout << ENQUEUE << " - enqueue (add to end)" << std::endl;
+        std::cout << DEQUEUE << " - dequeue (remove from front)" << std::endl;
+        std::cout << PEEK << " - peek (view front)" << std::endl;
+        std::cout << CLEAR << " - clear queue" << std::endl;
+        std::cout << EXIT << " - exit" << std::endl;
+        std::cout << "your choice: ";
+        choice = getValue();
+        
+        switch (choice)
         {
-            switch (choice)
+        case ENQUEUE:
+        {
+            int val = getValue("enter value to enqueue: ");
+            if (queue.enqueue(val))
             {
-            case ENQUEUE:
-            {
-                cout << "Enter a value to add: ";
-                int val = get_choice();
-                collection.enqueue(val);
-                cout << "After adding: " << collection << endl;
-                cout << "Queue size: " << collection.get_size() << endl;
-                break;
+                queue.print();
+                std::cout << "size: " << queue.getSize() << std::endl;
             }
-            case DEQUEUE:
-            {
-                int val = collection.dequeue();
-                cout << "Dequeued element: " << val << endl;
-                cout << "After dequeuing: " << collection << endl;
-                cout << "Queue size: " << collection.get_size() << endl;
-                break;
-            }
-            case PEEK:
-            {
-                int val = collection.peek();
-                cout << "Head element: " << val << endl;
-                cout << "Current queue: " << collection << endl;
-                break;
-            }
-            case CLEAR:
-            {
-                collection.clear();
-                cout << "The queue has been cleared!" << endl;
-                cout << "The size of the queue is: " << collection.get_size() << endl;
-                break;
-            }
-            case EXIT:
-            {
-                cout << "Program termination." << endl;
-                break;
-            }
-            default:
-                ERROR("Error: Invalid menu item selection.");
-            }
+            break;
         }
-        catch (const exception& e)
+        case DEQUEUE:
         {
-            cout << "Error! " << e.what() << endl;
+            int val;
+            if (queue.dequeue(val))
+            {
+                std::cout << "dequeued value: " << val << std::endl;
+                queue.print();
+                std::cout << "size: " << queue.getSize() << std::endl;
+            }
+            break;
+        }
+        case PEEK:
+        {
+            int val;
+            if (queue.peek(val))
+            {
+                std::cout << "front element: " << val << std::endl;
+            }
+            break;
+        }
+        case CLEAR:
+        {
+            queue.clear();
+            std::cout << "queue cleared!" << std::endl;
+            queue.print();
+            break;
+        }
+        case EXIT:
+        {
+            std::cout << "exiting program." << std::endl;
+            break;
+        }
+        default:
+        {
+            std::cout << "error. invalid choice.\n";
+            break;
+        }
         }
     }
-
+    
     return 0;
+}
+
+int getValue(std::string report)
+{
+    std::cout << report;
+    int value = 0;
+    std::cin >> value;
+    if (std::cin.fail())
+    {
+        std::cout << "error, invalid value entered.\n";
+        exit(1);
+    }
+    return value;
 }
