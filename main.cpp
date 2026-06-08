@@ -9,7 +9,7 @@
  * @param report - строка информации
  * @return считанное значение
  */
-unsigned int getValue(std::string report = "");
+int getValue(std::string report = "");
 
 /**
  * @brief Точка входа в программу
@@ -18,20 +18,28 @@ unsigned int getValue(std::string report = "");
 int main()
 {
     // Установка разрешения экрана
-    unsigned int screenResolution = getValue("enter screen resolution (max coordinate value): ");
+    int screenResolution = getValue("enter screen resolution (max coordinate value): ");
+    
+    // ПРОВЕРКА: разрешение экрана должно быть положительным
+    if (screenResolution <= 0)
+    {
+        std::cout << "error. screen resolution must be positive.\n";
+        exit(1);
+    }
+    
     Point::setMaxValue(screenResolution);
 
-    std::cout << "\n creating a rectangle using points3 \n" << std::endl;
+    std::cout << "\n creating a rectangle using points \n" << std::endl;
 
     // Способ 1: через точки
-    unsigned int x1 = getValue("enter x1: ");
-    unsigned int y1 = getValue("enter y1: ");
-    unsigned int x2 = getValue("enter x2: ");
-    unsigned int y2 = getValue("enter y2: ");
-    unsigned int x3 = getValue("enter x3: ");
-    unsigned int y3 = getValue("enter y3: ");
-    unsigned int x4 = getValue("enter x4: ");
-    unsigned int y4 = getValue("enter y4: ");
+    int x1 = getValue("enter x1: ");
+    int y1 = getValue("enter y1: ");
+    int x2 = getValue("enter x2: ");
+    int y2 = getValue("enter y2: ");
+    int x3 = getValue("enter x3: ");
+    int y3 = getValue("enter y3: ");
+    int x4 = getValue("enter x4: ");
+    int y4 = getValue("enter y4: ");
 
     Point p1(x1, y1);
     Point p2(x2, y2);
@@ -44,14 +52,14 @@ int main()
     std::cout << "\n creating a rectangle using coordinates \n" << std::endl;
 
     // Способ 2: через пары чисел
-    unsigned int a1 = getValue("enter x1: ");
-    unsigned int b1 = getValue("enter y1: ");
-    unsigned int a2 = getValue("enter x2: ");
-    unsigned int b2 = getValue("enter y2: ");
-    unsigned int a3 = getValue("enter x3: ");
-    unsigned int b3 = getValue("enter y3: ");
-    unsigned int a4 = getValue("enter x4: ");
-    unsigned int b4 = getValue("enter y4: ");
+    int a1 = getValue("enter x1: ");
+    int b1 = getValue("enter y1: ");
+    int a2 = getValue("enter x2: ");
+    int b2 = getValue("enter y2: ");
+    int a3 = getValue("enter x3: ");
+    int b3 = getValue("enter y3: ");
+    int a4 = getValue("enter x4: ");
+    int b4 = getValue("enter y4: ");
 
     Rectangle rect2(a1, b1, a2, b2, a3, b3, a4, b4);
     rect2.draw();
@@ -59,10 +67,10 @@ int main()
     return 0;
 }
 
-unsigned int getValue(std::string report)
+int getValue(std::string report)
 {
     std::cout << report;
-    unsigned int value = 0;
+    int value = 0;
     std::cin >> value;
     if (std::cin.fail())
     {
