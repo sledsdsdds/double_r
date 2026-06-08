@@ -8,9 +8,9 @@
 class Point
 {
 private:
-    unsigned int x;  // абсцисса
-    unsigned int y;  // ордината
-    static unsigned int maxValue;  // максимальное значение (разрешение экрана)
+     int x;  // абсцисса
+     int y;  // ордината
+     static int maxValue;  // максимальное значение (разрешение экрана)
 
 public:
     /**
@@ -34,7 +34,7 @@ public:
      * @brief Установка максимального значения (разрешение экрана)
      * @param max максимальное значение
      */
-    static void setMaxValue(unsigned int max);
+    static void setMaxValue(int max);
 
     /**
      * @brief Получение максимального значения
@@ -59,12 +59,12 @@ public:
     /**
      * @brief Оператор сложения точки с числом
      */
-    Point operator+(unsigned int value) const;
+    Point operator+(int value) const;
 
     /**
      * @brief Оператор вычитания точки с числом
      */
-    Point operator-(unsigned int value) const;
+    Point operator-(int value) const;
 
     /**
      * @brief Оператор вывода в поток
