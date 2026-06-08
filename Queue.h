@@ -1,126 +1,103 @@
 #pragma once
 #include <iostream>
-#include <initializer_list>
 #include <string>
 
 /**
- * @brief Класс Очередь (Queue)
+ * @brief Шаблонный класс Очередь (Queue)
  * Реализует структуру данных FIFO (первым пришёл - первым ушёл)
+ * 
+ * @tparam Type тип хранимых элементов
  */
+template <class Type>
 class Queue
 {
 private:
     /**
-     * @brief Указатель на массив элементов
+     * @brief Максимальный размер очереди
      */
-    int* m_elements;
-
+    enum { MAX = 10 };
+    
+    /**
+     * @brief Массив для хранения элементов
+     */
+    Type items[MAX];
+    
+    /**
+     * @brief Индекс начала очереди (откуда удаляем)
+     */
+    size_t front;
+    
+    /**
+     * @brief Индекс конца очереди (куда добавляем)
+     */
+    size_t rear;
+    
     /**
      * @brief Количество элементов в очереди
      */
-    size_t m_count;
-
-    /**
-     * @brief Ёмкость очереди (максимальное количество элементов)
-     */
-    size_t m_capacity;
-
-    /**
-     * @brief Индекс начала очереди (для удаления)
-     */
-    size_t m_front;
-
-    /**
-     * @brief Индекс конца очереди (для добавления)
-     */
-    size_t m_rear;
-
-    /**
-     * @brief Увеличение ёмкости очереди при необходимости
-     */
-    void resize();
+    size_t count;
 
 public:
     /**
      * @brief Конструктор по умолчанию
      */
     Queue();
-
+    
     /**
-     * @brief Конструктор со списком инициализации
+     * @brief Проверка, пуста ли очередь
+     * @return true если пуста, false если не пуста
      */
-    Queue(const std::initializer_list<int> items);
-
+    bool isEmpty() const;
+    
     /**
-     * @brief Конструктор копирования
+     * @brief Проверка, заполнена ли очередь
+     * @return true если заполнена, false если есть место
      */
-    Queue(const Queue& other);
-
-    /**
-     * @brief Конструктор перемещения
-     */
-    Queue(Queue&& other);
-
-    /**
-     * @brief Деструктор
-     */
-    ~Queue();
-
+    bool isFull() const;
+    
     /**
      * @brief Добавление элемента в конец очереди (enqueue)
-     * @param value добавляемое значение
+     * @param item добавляемый элемент
+     * @return true если добавление успешно, false если очередь заполнена
      */
-    void enqueue(const int value);
-
+    bool enqueue(Type& item);
+    
     /**
      * @brief Удаление элемента из начала очереди (dequeue)
-     * @return удалённое значение
+     * @param item переменная для сохранения удалённого элемента
+     * @return true если удаление успешно, false если очередь пуста
      */
-    int dequeue();
-
+    bool dequeue(Type& item);
+    
     /**
-     * @brief Чтение головного элемента без удаления (peek)
-     * @return значение головного элемента
+     * @brief Просмотр головного элемента без удаления (peek)
+     * @param item переменная для сохранения элемента
+     * @return true если очередь не пуста, false если пуста
      */
-    int peek() const;
-
+    bool peek(Type& item) const;
+    
     /**
-     * @brief Возвращает строку с содержимым очереди
+     * @brief Возвращает количество элементов в очереди
+     * @return размер очереди
      */
-    std::string to_string() const;
-
-    /**
-     * @brief Возвращает текущий размер очереди
-     */
-    size_t get_size() const;
-
-    /**
-     * @brief Проверка очереди на пустоту
-     */
-    bool is_empty() const;
-
+    size_t getSize() const;
+    
     /**
      * @brief Очистка очереди
      */
     void clear();
-
+    
     /**
-     * @brief Оператор присваивания (копирование)
+     * @brief Вывод очереди в поток
      */
-    Queue& operator=(const Queue& other);
-
+    void print() const;
+    
     /**
-     * @brief Оператор присваивания (перемещение)
+     * @brief Преобразование очереди в строку
+     * @return строковое представление очереди
      */
-    Queue& operator=(Queue&& other);
-
-    /**
-     * @brief Перегрузка оператора сдвига влево
-     */
-    friend std::ostream& operator<<(std::ostream& os, const Queue& q);
-
-    /**
-     * @brief Перегрузка оператора сдвига вправо (enqueue)
-     */
-    friend std::istream& operator>>(std::istream& is, Queue& q);
+    std::string toString() const;
 };
+
+// Включаем реализацию
+#include "Queue.cpp"
