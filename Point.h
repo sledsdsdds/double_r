@@ -23,12 +23,12 @@ public:
     /**
      * @brief Получение координаты X
      */
-    unsigned int getX() const;
+     int getX() const;
 
     /**
      * @brief Получение координаты Y
      */
-    unsigned int getY() const;
+     int getY() const;
 
     /**
      * @brief Установка максимального значения (разрешение экрана)
