@@ -3,10 +3,15 @@
 #include <cstdlib>
 #include <sstream>
 
-unsigned int Point::maxValue = 1024;
+int Point::maxValue = 1024;
 
-Point::Point(unsigned int x, unsigned int y)
+Point::Point(int x, int y)
 {
+    if (x < 0 || y < 0)
+    {
+        std::cout << "error. coordinates cannot be negative.\n";
+        exit(1);
+    }
     if (x > maxValue || y > maxValue)
     {
         std::cout << "error. coordinates exceed screen resolution (max " << maxValue << ").\n";
@@ -16,22 +21,27 @@ Point::Point(unsigned int x, unsigned int y)
     this->y = y;
 }
 
-unsigned int Point::getX() const
+int Point::getX() const
 {
     return this->x;
 }
 
-unsigned int Point::getY() const
+int Point::getY() const
 {
     return this->y;
 }
 
-void Point::setMaxValue(unsigned int max)
+void Point::setMaxValue(int max)
 {
+    if (max <= 0)
+    {
+        std::cout << "error. max value must be positive.\n";
+        exit(1);
+    }
     maxValue = max;
 }
 
-unsigned int Point::getMaxValue()
+int Point::getMaxValue()
 {
     return maxValue;
 }
@@ -53,19 +63,38 @@ bool Point::operator!=(const Point& p) const
     return !(*this == p);
 }
 
-Point Point::operator+(unsigned int value) const
+Point Point::operator+(int value) const
 {
-    return Point(x + value, y + value);
+    if (value < 0)
+    {
+        std::cout << "error. cannot add negative number.\n";
+        exit(1);
+    }
+    int newX = x + value;
+    int newY = y + value;
+    if (newX > maxValue || newY > maxValue)
+    {
+        std::cout << "error. result exceeds screen resolution.\n";
+        exit(1);
+    }
+    return Point(newX, newY);
 }
 
-Point Point::operator-(unsigned int value) const
+Point Point::operator-(int value) const
 {
-    if (x < value || y < value)
+    if (value < 0)
+    {
+        std::cout << "error. cannot subtract negative number.\n";
+        exit(1);
+    }
+    int newX = x - value;
+    int newY = y - value;
+    if (newX < 0 || newY < 0)
     {
         std::cout << "error. subtraction result cannot be negative.\n";
         exit(1);
     }
-    return Point(x - value, y - value);
+    return Point(newX, newY);
 }
 
 std::ostream& operator<<(std::ostream& os, const Point& p)
@@ -76,18 +105,26 @@ std::ostream& operator<<(std::ostream& os, const Point& p)
 
 std::istream& operator>>(std::istream& is, Point& p)
 {
+    int tx, ty;
     std::cout << "enter point coordinates (x y): ";
-    is >> p.x >> p.y;
+    is >> tx >> ty;
     if (is.fail())
     {
         std::cout << "input error.\n";
         exit(1);
     }
-    if (p.x > Point::maxValue || p.y > Point::maxValue)
+    if (tx < 0 || ty < 0)
+    {
+        std::cout << "error. coordinates cannot be negative.\n";
+        exit(1);
+    }
+    if (tx > Point::maxValue || ty > Point::maxValue)
     {
         std::cout << "error. coordinates exceed screen resolution (max " << Point::maxValue << ").\n";
         exit(1);
     }
+    p.x = tx;
+    p.y = ty;
     return is;
 }
 
