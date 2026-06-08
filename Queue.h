@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include "Queue.cpp"
 
 /**
  * @brief Шаблонный класс Очередь (Queue)
@@ -98,6 +99,3 @@ public:
      */
     std::string toString() const;
 };
-
-// Включаем реализацию
-#include "Queue.cpp"
