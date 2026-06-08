@@ -18,7 +18,7 @@ public:
      * @param x координата X
      * @param y координата Y
      */
-    Point(unsigned int x = 0, unsigned int y = 0);
+    Point(int x = 0, int y = 0);
 
     /**
      * @brief Получение координаты X
