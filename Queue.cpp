@@ -1,213 +1,138 @@
-#include "Queue.h"
-#include <sstream>
-#include <stdexcept>
+/**
+ * @brief Конструктор по умолчанию
+ */
+template <class Type>
+Queue<Type>::Queue() : front(0), rear(0), count(0) {}
 
-const size_t INITIAL_CAPACITY = 4;
-
-Queue::Queue() : m_elements(nullptr), m_count(0), m_capacity(0), m_front(0), m_rear(0) {}
-
-Queue::Queue(const std::initializer_list<int> items)
-    : m_elements(nullptr), m_count(items.size()), m_capacity(items.size()), m_front(0), m_rear(items.size())
+/**
+ * @brief Проверка, пуста ли очередь
+ */
+template <class Type>
+bool Queue<Type>::isEmpty() const
 {
-    if (m_count > 0)
+    return count == 0;
+}
+
+/**
+ * @brief Проверка, заполнена ли очередь
+ */
+template <class Type>
+bool Queue<Type>::isFull() const
+{
+    return count == MAX;
+}
+
+/**
+ * @brief Добавление элемента в конец очереди (enqueue)
+ */
+template <class Type>
+bool Queue<Type>::enqueue(Type& item)
+{
+    if (isFull())
     {
-        m_elements = new int[m_capacity];
-        size_t idx = 0;
-        for (const int& val : items)
-        {
-            m_elements[idx++] = val;
-        }
+        std::cout << "Error: queue is full!\n";
+        return false;
     }
+    
+    items[rear] = item;
+    rear = (rear + 1) % MAX;
+    count++;
+    return true;
 }
 
-Queue::~Queue()
+/**
+ * @brief Удаление элемента из начала очереди (dequeue)
+ */
+template <class Type>
+bool Queue<Type>::dequeue(Type& item)
 {
-    delete[] m_elements;
-}
-
-Queue::Queue(const Queue& other)
-    : m_elements(nullptr), m_count(other.m_count), m_capacity(other.m_capacity),
-    m_front(other.m_front), m_rear(other.m_rear)
-{
-    if (m_capacity > 0)
+    if (isEmpty())
     {
-        m_elements = new int[m_capacity];
-        for (size_t i = 0; i < m_capacity; ++i)
-        {
-            m_elements[i] = other.m_elements[i];
-        }
+        std::cout << "Error: queue is empty!\n";
+        return false;
     }
+    
+    item = items[front];
+    front = (front + 1) % MAX;
+    count--;
+    return true;
 }
 
-Queue::Queue(Queue&& other)
-    : m_elements(other.m_elements), m_count(other.m_count), m_capacity(other.m_capacity),
-    m_front(other.m_front), m_rear(other.m_rear)
+/**
+ * @brief Просмотр головного элемента без удаления (peek)
+ */
+template <class Type>
+bool Queue<Type>::peek(Type& item) const
 {
-    other.m_elements = nullptr;
-    other.m_count = 0;
-    other.m_capacity = 0;
-    other.m_front = 0;
-    other.m_rear = 0;
-}
-
-void Queue::resize()
-{
-    size_t new_capacity = (m_capacity == 0) ? INITIAL_CAPACITY : m_capacity * 2;
-    int* new_elements = new int[new_capacity];
-
-    // Копируем элементы в новое место (выравниваем с начала)
-    for (size_t i = 0; i < m_count; ++i)
+    if (isEmpty())
     {
-        new_elements[i] = m_elements[(m_front + i) % m_capacity];
+        std::cout << "Error: queue is empty!\n";
+        return false;
     }
-
-    delete[] m_elements;
-    m_elements = new_elements;
-    m_front = 0;
-    m_rear = m_count;
-    m_capacity = new_capacity;
+    
+    item = items[front];
+    return true;
 }
 
-void Queue::enqueue(const int value)
+/**
+ * @brief Возвращает количество элементов в очереди
+ */
+template <class Type>
+size_t Queue<Type>::getSize() const
 {
-    if (m_count == m_capacity)
-    {
-        resize();
-    }
-
-    if (m_count == 0)
-    {
-        if (m_capacity == 0)
-        {
-            resize();
-        }
-        m_front = 0;
-        m_rear = 0;
-    }
-
-    m_elements[m_rear] = value;
-    m_rear = (m_rear + 1) % m_capacity;
-    m_count++;
+    return count;
 }
 
-int Queue::dequeue()
+/**
+ * @brief Очистка очереди
+ */
+template <class Type>
+void Queue<Type>::clear()
 {
-    if (is_empty())
-    {
-        throw std::out_of_range("Error: The queue is empty, and you cannot delete an item.");
-    }
-
-    int value = m_elements[m_front];
-    m_front = (m_front + 1) % m_capacity;
-    m_count--;
-
-    return value;
+    front = 0;
+    rear = 0;
+    count = 0;
 }
 
-int Queue::peek() const
+/**
+ * @brief Вывод очереди в поток
+ */
+template <class Type>
+void Queue<Type>::print() const
 {
-    if (is_empty())
+    if (isEmpty())
     {
-        throw std::out_of_range("Error: The queue is empty, and there are no items to view.");
+        std::cout << "Queue: empty\n";
+        return;
     }
-    return m_elements[m_front];
+    
+    std::cout << "Queue: ";
+    for (size_t i = 0; i < count; ++i)
+    {
+        std::cout << items[(front + i) % MAX];
+        if (i < count - 1)
+            std::cout << " ";
+    }
+    std::cout << std::endl;
 }
 
-std::string Queue::to_string() const
+/**
+ * @brief Преобразование очереди в строку
+ */
+template <class Type>
+std::string Queue<Type>::toString() const
 {
-    if (is_empty())
+    if (isEmpty())
+    {
         return "Empty";
-
-    std::stringstream ss;
-    for (size_t i = 0; i < m_count; ++i)
-    {
-        ss << m_elements[(m_front + i) % m_capacity];
-        if (i < m_count - 1)
-            ss << " ";
     }
-    return ss.str();
-}
-
-size_t Queue::get_size() const
-{
-    return m_count;
-}
-
-bool Queue::is_empty() const
-{
-    return m_count == 0;
-}
-
-void Queue::clear()
-{
-    delete[] m_elements;
-    m_elements = nullptr;
-    m_count = 0;
-    m_capacity = 0;
-    m_front = 0;
-    m_rear = 0;
-}
-
-Queue& Queue::operator=(const Queue& other)
-{
-    if (this != &other)
+    
+    std::string result;
+    for (size_t i = 0; i < count; ++i)
     {
-        delete[] m_elements;
-
-        m_count = other.m_count;
-        m_capacity = other.m_capacity;
-        m_front = other.m_front;
-        m_rear = other.m_rear;
-
-        if (m_capacity > 0)
-        {
-            m_elements = new int[m_capacity];
-            for (size_t i = 0; i < m_capacity; ++i)
-            {
-                m_elements[i] = other.m_elements[i];
-            }
-        }
-        else
-        {
-            m_elements = nullptr;
-        }
+        result += std::to_string(items[(front + i) % MAX]);
+        if (i < count - 1)
+            result += " ";
     }
-    return *this;
-}
-
-Queue& Queue::operator=(Queue&& other)
-{
-    if (this != &other)
-    {
-        delete[] m_elements;
-
-        m_elements = other.m_elements;
-        m_count = other.m_count;
-        m_capacity = other.m_capacity;
-        m_front = other.m_front;
-        m_rear = other.m_rear;
-
-        other.m_elements = nullptr;
-        other.m_count = 0;
-        other.m_capacity = 0;
-        other.m_front = 0;
-        other.m_rear = 0;
-    }
-    return *this;
-}
-
-std::ostream& operator<<(std::ostream& os, const Queue& q)
-{
-    os << q.to_string();
-    return os;
-}
-
-std::istream& operator>>(std::istream& is, Queue& q)
-{
-    int value = 0;
-    if (is >> value)
-    {
-        q.enqueue(value);
-    }
-    return is;
+    return result;
 }
