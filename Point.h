@@ -10,7 +10,7 @@ class Point
 private:
     int x;  // абсцисса
     int y;  // ордината
-    static int maxValue;  // максимальное значение (разрешение экрана)
+    static const int maxValue;  // максимальное значение (разрешение экрана) - const
 
 public:
     /**
@@ -29,12 +29,6 @@ public:
      * @brief Получение координаты Y
      */
     int getY() const;
-
-    /**
-     * @brief Установка максимального значения (разрешение экрана)
-     * @param max максимальное значение
-     */
-    static void setMaxValue(int max);
 
     /**
      * @brief Получение максимального значения
