@@ -17,11 +17,10 @@ int getValue(std::string report = "");
  */
 int main()
 {
-    // Установка разрешения экрана
-    int screenResolution = getValue("enter screen resolution (max coordinate value): ");
-    Point::setMaxValue(screenResolution);
+    std::cout << "Screen resolution (max coordinate value): " << Point::getMaxValue() << std::endl;
+    std::cout << "Note: maxValue is constant (1024) and cannot be changed.\n" << std::endl;
 
-    std::cout << "\n creating a rectangle using points3 \n" << std::endl;
+    std::cout << "\nCreating a rectangle using points\n" << std::endl;
 
     // Способ 1: через точки
     int x1 = getValue("enter x1:  ");
@@ -41,7 +40,7 @@ int main()
     Rectangle rect1(p1, p2, p3, p4);
     rect1.draw();
 
-    std::cout << "\n creating a rectangle using coordinates \n" << std::endl;
+    std::cout << "\nCreating a rectangle using coordinates\n" << std::endl;
 
     // Способ 2: через пары чисел
     int a1 = getValue("enter x1:  ");
@@ -52,7 +51,6 @@ int main()
     int b3 = getValue("enter y3:  ");
     int a4 = getValue("enter x4:  ");
     int b4 = getValue("enter y4:  ");
-
 
     Rectangle rect2(a1, b1, a2, b2, a3, b3, a4, b4);
     rect2.draw();
