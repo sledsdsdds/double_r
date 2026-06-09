@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <sstream>
 
-int Point::maxValue = 1024;
+const int Point::maxValue = 1024;
 
 Point::Point(int x, int y)
 {
@@ -24,11 +24,6 @@ int Point::getX() const
 int Point::getY() const
 {
     return this->y;
-}
-
-void Point::setMaxValue(int max)
-{
-    maxValue = max;
 }
 
 int Point::getMaxValue()
