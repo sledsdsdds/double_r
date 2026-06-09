@@ -1,118 +1,78 @@
-#include "Rectangle.h"
-#include <iostream>
-#include <cmath>
-#include <algorithm>
-#include <cstdlib>
-#include <sstream>
+#pragma once
+#include "Figure.h"
+#include "Point.h"
+#include <utility>
 
-Rectangle::Rectangle(const Point& p1, const Point& p2,
-    const Point& p3, const Point& p4)
-    : p1(p1), p2(p2), p3(p3), p4(p4)
+/**
+ * @brief Класс Прямоугольник
+ */
+class Rectangle : public Figure
 {
-    if (!isRectangle())
-    {
-        std::cout << "error. four points do not form a rectangle.\n";
-        exit(1);
-    }
-}
-
-Rectangle::Rectangle(int x1, int y1,
-    int x2, int y2,
-    int x3, int y3,
-    int x4, int y4)
-    : p1(x1, y1), p2(x2, y2), p3(x3, y3), p4(x4, y4)
-{
-    if (!isRectangle())
-    {
-        std::cout << "error. four points do not form a rectangle.\n";
-        exit(1);
-    }
-}
-
-bool Rectangle::isRectangle() const
-{
-    double d12 = p1.distanceTo(p2);
-    double d23 = p2.distanceTo(p3);
-    double d34 = p3.distanceTo(p4);
-    double d41 = p4.distanceTo(p1);
-    double d13 = p1.distanceTo(p3);
-    double d24 = p2.distanceTo(p4);
-
-    double eps = 1e-9;
-
-    // Противоположные стороны равны
-    if (std::abs(d12 - d34) > eps) return false;
-    if (std::abs(d23 - d41) > eps) return false;
-
-    // Диагонали равны
-    if (std::abs(d13 - d24) > eps) return false;
-
-    // Теорема Пифагора
-    if (std::abs(d12 * d12 + d23 * d23 - d13 * d13) > eps) return false;
-
-    // Проверка на вырожденность
-    if (d12 < eps || d23 < eps) return false;
-
-    return true;
-}
-
-std::pair<double, double> Rectangle::getSides() const
-{
-    double side1 = p1.distanceTo(p2);
-    double side2 = p2.distanceTo(p3);
-    if (side1 > side2) std::swap(side1, side2);
-    return { side1, side2 };
-}
-
-Point Rectangle::getP1() const { return p1; }
-Point Rectangle::getP2() const { return p2; }
-Point Rectangle::getP3() const { return p3; }
-Point Rectangle::getP4() const { return p4; }
-
-std::string Rectangle::toString() const
-{
-    std::stringstream ss;
-    ss << "rectangle: " << p1.toString() << ", "
-        << p2.toString() << ", "
-        << p3.toString() << ", "
-        << p4.toString();
-    return ss.str();
-}
-
-void Rectangle::draw() const
-{
-    std::cout << toString() << std::endl;
-    std::cout << "area: " << getArea() << std::endl;
-    std::cout << "circumscribed circle radius: " << getCircumscribedCircleRadius() << std::endl;
-}
-
-void Rectangle::read()
-{
-    std::cout << "enter the vertices of the rectangle:" << std::endl;
-    std::cin >> p1 >> p2 >> p3 >> p4;
-
-    if (!isRectangle())
-    {
-        std::cout << "error. the entered points do not form a rectangle.\n";
-        exit(1);
-    }
-}
-
-Rectangle Rectangle::readFromStream()
-{
+private:
     Point p1, p2, p3, p4;
-    std::cin >> p1 >> p2 >> p3 >> p4;
-    return Rectangle(p1, p2, p3, p4);
-}
 
-double Rectangle::getArea() const
-{
-    auto sides = getSides();
-    return sides.first * sides.second;
-}
+    /**
+     * @brief Проверка, является ли фигура прямоугольником
+     * @return true, если четыре точки образуют прямоугольник
+     */
+    bool isRectangle() const;
 
-double Rectangle::getCircumscribedCircleRadius() const
-{
-    auto sides = getSides();
-    return std::sqrt(sides.first * sides.first + sides.second * sides.second) / 2.0;
-}
+    /**
+     * @brief Получение сторон прямоугольника
+     * @return пара сторон (меньшая, большая)
+     */
+    std::pair<double, double> getSides() const;
+
+public:
+    /**
+     * @brief Конструктор через точки
+     */
+    Rectangle(const Point& p1, const Point& p2,
+        const Point& p3, const Point& p4);
+
+    /**
+     * @brief Конструктор через пары чисел
+     */
+    Rectangle(int x1, int y1,
+        int x2, int y2,
+        int x3, int y3,
+        int x4, int y4);
+
+    /**
+     * @brief Получение вершин прямоугольника
+     */
+    Point getP1() const;
+    Point getP2() const;
+    Point getP3() const;
+    Point getP4() const;
+
+    /**
+     * @brief Сериализация в строку
+     */
+    std::string toString() const override;
+
+    /**
+     * @brief Рисование фигуры
+     */
+    void draw() const override;
+
+    /**
+     * @brief Чтение фигуры из потока
+     */
+    void read() override;
+
+    /**
+     * @brief Статический метод чтения прямоугольника
+     */
+    static Rectangle readFromStream();
+
+    /**
+     * @brief Вычисление площади
+     */
+    double getArea() const;
+
+    /**
+     * @brief Вычисление радиуса описанной окружности
+     */
+    double getCircumscribedCircleRadius() const;
+};
