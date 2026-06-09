@@ -18,7 +18,7 @@ int getValue(std::string report = "");
 int main()
 {
     // Установка разрешения экрана
-    unsigned int screenResolution = getValue("enter screen resolution (max coordinate value): ");
+    int screenResolution = getValue("enter screen resolution (max coordinate value): ");
     Point::setMaxValue(screenResolution);
 
     std::cout << "\n creating a rectangle using points3 \n" << std::endl;
@@ -63,7 +63,7 @@ int main()
 int getValue(std::string report)
 {
     std::cout << report;
-    unsigned int value = 0;
+    int value = 0;
     std::cin >> value;
     if (std::cin.fail())
     {
