@@ -1,6 +1,6 @@
 #pragma once
 #include "Figure.h"
-#include "point.h"
+#include "Point.h"
 #include <utility>
 
 /**
@@ -19,8 +19,7 @@ private:
 
     /**
      * @brief Получение сторон прямоугольника
-     * @param side1 первая сторона
-     * @param side2 вторая сторона
+     * @return пара сторон (меньшая, большая)
      */
     std::pair<double, double> getSides() const;
 
@@ -35,9 +34,9 @@ public:
      * @brief Конструктор через пары чисел
      */
     Rectangle(int x1, int y1,
-              int x2, int y2,
-              int x3, int y3,
-              int x4, int y4);
+        int x2, int y2,
+        int x3, int y3,
+        int x4, int y4);
 
     /**
      * @brief Получение вершин прямоугольника
