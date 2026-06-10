@@ -33,10 +33,10 @@ public:
     /**
      * @brief Конструктор через пары чисел
      */
-    Rectangle(int x1, int y1,
-        int x2, int y2,
-        int x3, int y3,
-        int x4, int y4);
+    Rectangle(const int x1, const int y1,
+        const int x2, const int y2,
+        const int x3, const int y3,
+        const int x4, const int y4);
 
     /**
      * @brief Получение вершин прямоугольника
