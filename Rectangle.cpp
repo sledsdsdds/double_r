@@ -38,7 +38,7 @@ bool Rectangle::isRectangle() const
     double d13 = p1.distanceTo(p3);
     double d24 = p2.distanceTo(p4);
 
-    double eps = 1e-9;
+    double eps = std::numeric_limits<double>::epsilon();
 
     // Противоположные стороны равны
     if (std::abs(d12 - d34) > eps) return false;
