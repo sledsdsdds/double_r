@@ -14,13 +14,19 @@ Queue::Queue(const std::initializer_list<int> init) : head(nullptr), tail(nullpt
 
 Queue::Queue(const Queue& other) : head(nullptr), tail(nullptr), count(0)
 {
+   
     Node* current = other.head;
     while (current != nullptr)
     {
-        enqueue(current->data);
+        Node* newNode = new Node(current->data);
+        if (tail != nullptr)
+            tail->next = newNode;
+        else
+            head = newNode;
+        tail = newNode;
+        count++;
         current = current->next;
     }
-}
 
 Queue::Queue(Queue&& other) noexcept : head(other.head), tail(other.tail), count(other.count)
 {
