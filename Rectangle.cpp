@@ -16,10 +16,10 @@ Rectangle::Rectangle(const Point& p1, const Point& p2,
     }
 }
 
-Rectangle::Rectangle(int x1, int y1,
-    int x2, int y2,
-    int x3, int y3,
-    int x4, int y4)
+Rectangle::Rectangle(const int x1, const int y1,
+        const int x2, const int y2,
+        const int x3, const int y3,
+        const int x4, const int y4)
     : p1(x1, y1), p2(x2, y2), p3(x3, y3), p4(x4, y4)
 {
     if (!isRectangle())
