@@ -53,12 +53,12 @@ public:
     /**
      * @brief Оператор сложения точки с числом
      */
-    Point operator+(int value) const;
+    Point operator+(const int value);
 
     /**
      * @brief Оператор вычитания точки с числом
      */
-    Point operator-(int value) const;
+    Point operator-(const int value);
 
     /**
      * @brief Оператор вывода в поток
