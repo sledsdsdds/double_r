@@ -5,7 +5,7 @@
 
 const int Point::maxValue = 1024;
 
-Point::Point(int x, int y)
+Point::Point(const int x,const int y)
 {
     if (x > maxValue || y > maxValue || x < -maxValue || y < -maxValue)
     {
