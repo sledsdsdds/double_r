@@ -48,12 +48,12 @@ bool Point::operator!=(const Point& p) const
     return !(*this == p);
 }
 
-Point Point::operator+(int value) const
+Point Point::operator+(const int value)
 {
     return Point(x + value, y + value);
 }
 
-Point Point::operator-(int value) const
+Point Point::operator-(const int value)
 {
     return Point(x - value, y - value);
 }
