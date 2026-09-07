@@ -33,7 +33,7 @@ public:
     /**
      * @brief Получение максимального значения
      */
-    static int getMaxValue();
+    static int getMaxValue() const;
 
     /**
      * @brief Преобразование в строку
