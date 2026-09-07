@@ -26,7 +26,7 @@ int Point::getY() const
     return this->y;
 }
 
-int Point::getMaxValue()
+int Point::getMaxValue() const
 {
     return maxValue;
 }
