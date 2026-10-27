@@ -1,8 +1,8 @@
 #include "Exercise.h"
 #include <utility>
 
-miit::algebra::Exercise::Exercise(Matrix<int> matrix, std::shared_ptr<Generator> generator)
-    : matrix{ std::move(matrix) }, generator{ std::move(generator) }
+miit::algebra::Exercise::Exercise(Matrix<int> matrix, Generator& generator)
+    : matrix{ std::move(matrix) }, generator{ (generator) }
 {
 }
 
