@@ -12,7 +12,7 @@ namespace miit::algebra
         int value;
 
     public:
-        explicit ConstantGenerator(int value);
+        explicit ConstantGenerator(const int value);
 
         int generate() override;
     };
