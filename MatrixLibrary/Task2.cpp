@@ -3,8 +3,8 @@
 #include <vector>
 #include <algorithm>
 
-miit::algebra::Task2::Task2(Matrix<int> matrix, std::shared_ptr<Generator> generator)
-    : Exercise(std::move(matrix), std::move(generator))
+miit::algebra::Task2::Task2(Matrix<int> matrix, Generator& generator)
+    : Exercise(std::move(matrix), (generator))
 {
 }
 
