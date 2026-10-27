@@ -9,7 +9,7 @@ namespace miit::algebra
     class Task1 : public Exercise
     {
     public:
-        Task1(Matrix<int> matrix, std::shared_ptr<Generator> generator);
+        Task1(Matrix<int> matrix, Generator& generator);
 
         void solve() override;
     };
