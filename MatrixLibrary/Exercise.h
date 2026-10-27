@@ -11,7 +11,7 @@ namespace miit::algebra
     {
     protected:
         Matrix<int> matrix;
-        std::shared_ptr<Generator> generator;
+        <Generator> generator;
 
     public:
         /**
