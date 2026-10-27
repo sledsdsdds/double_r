@@ -34,7 +34,7 @@ namespace miit::algebra
          * @param rows число строк
          * @param cols число столбцов
          */
-        Matrix(std::size_t rows, std::size_t cols);
+        Matrix(const std::size_t rows, std::size_t cols);
 
         /**
          * @brief конструктор с размерами и генератором
@@ -42,7 +42,7 @@ namespace miit::algebra
          * @param cols число столбцов
          * @param generator генератор значений (меняется при заполнении)
          */
-        Matrix(std::size_t rows, std::size_t cols, Generator& generator);
+        Matrix(const std::size_t rows, std::size_t cols, Generator& generator);
 
         /** @brief конструктор копирования */
         Matrix(const Matrix& other) = default;
@@ -60,30 +60,44 @@ namespace miit::algebra
         Matrix& operator=(Matrix&& other) noexcept = default;
 
         /**
+         * @brief Оператор сравнения на равенство
+         * @param other другая матрица для сравнения
+         * @return true, если матрицы имеют одинаковый размер и одинаковые элементы
+         */
+        bool operator==(const Matrix& other) const;
+
+        /**
+         * @brief Оператор сравнения на неравенство
+         * @param other другая матрица для сравнения
+         * @return true, если матрицы различаются по размеру или элементам
+         */
+        bool operator!=(const Matrix& other) const;
+
+        /**
          * @brief циклический сдвиг элементов каждой строки влево
          * @param shift величина сдвига
          * @return ссылка на текущий объект
          */
-        Matrix& operator<<(std::size_t shift);
+        Matrix& operator<<(const std::size_t shift);
 
         /**
          * @brief циклический сдвиг элементов каждой строки вправо
          * @param shift величина сдвига
          * @return ссылка на текущий объект
          */
-        Matrix& operator>>(std::size_t shift);
+        Matrix& operator>>(const std::size_t shift);
 
         /**
          * @brief доступ к строке по индексу (изменяемый)
          * @param index индекс строки
          */
-        std::vector<T>& operator[](std::size_t index);
+        std::vector<T>& operator[](const std::size_t index);
 
         /**
          * @brief доступ к строке по индексу (только для чтения)
          * @param index индекс строки
          */
-        const std::vector<T>& operator[](std::size_t index) const;
+        const std::vector<T>& operator[](const std::size_t index) const;
 
         /** @brief количество строк */
         std::size_t getRows() const noexcept;
@@ -108,19 +122,19 @@ namespace miit::algebra
          * @param pos позиция (0..rows), после которой вставить
          * @param row вставляемая строка
          */
-        void insertRowAfter(std::size_t pos, const std::vector<T>& row);
+        void insertRowAfter(const std::size_t pos, const std::vector<T>& row);
 
         /**
          * @brief получить строку по индексу (изменяемую)
          * @param index индекс строки
          */
-        std::vector<T>& getRow(std::size_t index);
+        std::vector<T>& getRow(const std::size_t index);
 
         /**
          * @brief получить строку по индексу (только для чтения)
          * @param index индекс строки
          */
-        const std::vector<T>& getRow(std::size_t index) const;
+        const std::vector<T>& getRow(const std::size_t index) const;
     };
 
     // ==================== Реализация ====================
@@ -142,6 +156,18 @@ namespace miit::algebra
         : data(rows, std::vector<T>(cols, T{})), rows(rows), cols(cols)
     {
         fill(generator);
+    }
+
+    template <typename T>
+    bool Matrix<T>::operator==(const Matrix& other) const
+    {
+        return data == other.data; // std::vector сам умеет сравнивать свои элементы
+    }
+
+    template <typename T>
+    bool Matrix<T>::operator!=(const Matrix& other) const
+    {
+        return !(*this == other);
     }
 
     template <typename T>
