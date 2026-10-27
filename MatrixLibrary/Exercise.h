@@ -1,6 +1,5 @@
 #pragma once
 #include "Matrix.h"
-#include <memory>
 
 namespace miit::algebra
 {
@@ -11,7 +10,7 @@ namespace miit::algebra
     {
     protected:
         Matrix<int> matrix;
-        <Generator> generator;
+        Generator& generator;
 
     public:
         /**
@@ -19,14 +18,14 @@ namespace miit::algebra
          * @param matrix матрица
          * @param generator генератор
          */
-        Exercise(Matrix<int> matrix, std::shared_ptr<Generator> generator);
+        Exercise(Matrix<int> matrix, Generator& generator);
 
         virtual ~Exercise() = default;
 
-        /** @brief выыполнить задание */
+        /** @brief выполнить задание */
         virtual void solve() = 0;
 
-        /** @brief получить матрицу (только для чтения) */
+        /** @brief Получить матрицу (только для чтения) */
         const Matrix<int>& getMatrix() const;
     };
 }
