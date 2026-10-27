@@ -8,6 +8,7 @@ namespace miit::algebra
     class Generator
     {
     public:
+        Generator() = default;
         virtual ~Generator() = default;
 
         /**
