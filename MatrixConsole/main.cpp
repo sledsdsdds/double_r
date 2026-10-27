@@ -1,6 +1,5 @@
 #include <windows.h>
 #include <iostream>
-#include <memory>
 #include <limits>
 #include <string>
 #include <stdexcept>
@@ -15,62 +14,82 @@
 
 using namespace miit::algebra;
 
+/**
+ * @brief Перечисление способов заполнения матрицы.
+ * Используется для замены магических чисел в switch-case.
+ */
+enum class FillMode
+{
+    RANDOM = 1,   /**< случайные числа */
+    KEYBOARD = 2, /**< ввод с клавиатуры */
+    CONSTANT = 3, /**< константное значение */
+    ZEROS = 4     /**< заполнение нулями */
+};
+
 namespace
 {
+    /**
+     * @brief Безопасно считывает размер (число) из консоли.
+     * @param prompt текст приглашения ко вводу
+     * @return введенное число
+     * @throws std::runtime_error если достигнут конец ввода (EOF)
+     */
     std::size_t readSize(const std::string& prompt)
     {
         std::size_t value = 0;
         while (true)
         {
             std::cout << prompt;
-            if (std::cin >> value)
-            {
-                return value;
-            }
-            if (std::cin.eof())
-            {
-                throw std::runtime_error("конец ввода");
-            }
+            if (std::cin >> value) return value;
+            if (std::cin.eof()) throw std::runtime_error("конец ввода");
             std::cin.clear();
             std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
-            std::cout << "некорректный ввод, попробуйте снова!\n";
+            std::cout << "гекорректный ввод, попробуйте снова.\n";
         }
     }
 
-    std::shared_ptr<Generator> chooseGenerator()
+    /**
+     * @brief Предлагает пользователю выбрать способ заполнения и создает соответствующий генератор.
+     * @return указатель на созданный генератор (требует удаления через delete)
+     */
+    Generator* chooseGenerator()
     {
-        std::cout << "\nвыберите способ заполнения:\n"
+        std::cout << "\nВыберите способ заполнения:\n"
             << "  1 - случайные числа\n"
             << "  2 - ввод с клавиатуры\n"
             << "  3 - константное значение\n"
             << "  4 - нулями\n"
-            << "ваш выбор: ";
+            << "Ваш выбор: ";
 
         int choice = 0;
         std::cin >> choice;
 
-        switch (choice)
+        switch (static_cast<FillMode>(choice))
         {
-        case 1:
-            return std::make_shared<RandomGenerator>(-50, 50);
-        case 2:
-            return std::make_shared<IStreamGenerator>(std::cin);
-        case 3:
+        case FillMode::RANDOM:
+            return new RandomGenerator(-50, 50);
+        case FillMode::KEYBOARD:
+            return new IStreamGenerator(std::cin);
+        case FillMode::CONSTANT:
         {
             int c = 0;
             std::cout << "введите константу: ";
             std::cin >> c;
-            return std::make_shared<ConstantGenerator>(c);
+            return new ConstantGenerator(c);
         }
-        case 4:
-            return std::make_shared<ConstantGenerator>(0);
+        case FillMode::ZEROS:
+            return new ConstantGenerator(0);
         default:
             std::cout << "неверный выбор, используется RandomGenerator.\n";
-            return std::make_shared<RandomGenerator>(-50, 50);
+            return new RandomGenerator(-50, 50);
         }
     }
 }
 
+/**
+ * @brief Точка входа в демонстрационную программу.
+ * @return 0 при успешном выполнении, 1 при возникновении ошибки
+ */
 int main()
 {
     SetConsoleCP(65001);
@@ -79,47 +98,48 @@ int main()
 
     try
     {
-        const std::size_t rows = readSize("введите количество строк n: ");
-        const std::size_t cols = readSize("введите количество столбцов m: ");
+        const std::size_t rows = readSize("Введите количество строк n: ");
+        const std::size_t cols = readSize("Введите количество столбцов m: ");
 
-        auto generator = chooseGenerator();
-
+        Generator* generator = chooseGenerator();
         Matrix<int> original(rows, cols, *generator);
 
-        std::cout << "\nисходная матрица:\n" << original.toString();
+        std::cout << "\nИсходная матрица:\n" << original.toString();
 
-        // задание2
+        //задание 1
         {
-            Task1 task1(original, generator);
+            Task1 task1(original, *generator);
             task1.solve();
-            std::cout << "\nзадание 1 (макс. элемент каждого столбца -> 0):\n"
+            std::cout << "\nЗадание 1 (макс. элемент каждого столбца -> 0):\n"
                 << task1.getMatrix().toString();
         }
 
-        // здаание2
+        //задание 2
         {
-            Task2 task2(original, generator);
+            Task2 task2(original, *generator);
             task2.solve();
-            std::cout << "\nзадание 2 (вставка первой строки после строк с max|elem|):\n"
+            std::cout << "\nЗадание 2 (вставка первой строки после строк с max|elem|):\n"
                 << task2.getMatrix().toString();
         }
 
-        //  демонстрация операторов 
-        std::cout << "\nсдвиг влево на 2 (operator<<):\n";
+        //демонстрация операторов
+        std::cout << "\nСдвиг влево на 2 (operator<<):\n";
         Matrix<int> shifted = original;
         shifted << 2;
         std::cout << shifted.toString();
 
-        std::cout << "\nсдвиг вправо на 1 (operator>>):\n";
+        std::cout << "\nСдвиг вправо на 1 (operator>>):\n";
         Matrix<int> shifted2 = original;
         shifted2 >> 1;
         std::cout << shifted2.toString();
 
-        std::cout << "\nэлемент [0][0] через operator[]: " << original[0][0] << '\n';
+        std::cout << "\nЭлемент [0][0] через operator[]: " << original[0][0] << '\n';
+
+        delete generator; //очищаем память, выделенную под генератор
     }
     catch (const std::exception& ex)
     {
-        std::cerr << "ошибка: " << ex.what() << '\n';
+        std::cerr << "Ошибка: " << ex.what() << '\n';
         return 1;
     }
 
