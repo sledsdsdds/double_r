@@ -95,7 +95,7 @@ namespace
         m[0][0] = 1; m[0][1] = 5; m[0][2] = 3;
         m[1][0] = 4; m[1][1] = 2; m[1][2] = 6;
 
-        Task1 t(m, std::make_shared<ConstantGenerator>(0));
+        Task1 t(m, g);
         t.solve();
 
         const Matrix<int>& r = t.getMatrix();
@@ -112,7 +112,7 @@ namespace
         m[0][0] = -9; m[0][1] = 1;
         m[1][0] = 2; m[1][1] = 3;
 
-        Task2 t(m, std::make_shared<ConstantGenerator>(0));
+        Task2 t(m, g);
         t.solve();
 
         const Matrix<int>& r = t.getMatrix();
