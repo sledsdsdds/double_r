@@ -178,7 +178,7 @@ namespace miit::algebra
             return *this;
         }
         shift %= cols;
-        for (auto& row : data)
+        for (std::vector<T>& row : data)
         {
             std::rotate(row.begin(), row.begin() + shift, row.end());
         }
@@ -193,7 +193,7 @@ namespace miit::algebra
             return *this;
         }
         shift %= cols;
-        for (auto& row : data)
+        for (std::vector<T>& row : data)
         {
             std::rotate(row.rbegin(), row.rbegin() + shift, row.rend());
         }
@@ -234,9 +234,9 @@ namespace miit::algebra
     std::string Matrix<T>::toString() const
     {
         std::ostringstream oss;
-        for (const auto& row : data)
+        for (const std::vector<T>& row : data)
         {
-            for (const auto& el : row)
+            for (const T& el : row)
             {
                 oss << el << ' ';
             }
@@ -248,9 +248,9 @@ namespace miit::algebra
     template <typename T>
     void Matrix<T>::fill(Generator& generator)
     {
-        for (auto& row : data)
+        for (std::vector<T>& row : data)
         {
-            for (auto& el : row)
+            for (T& el : row)
             {
                 el = static_cast<T>(generator.generate());
             }
