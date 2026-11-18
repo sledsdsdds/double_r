@@ -21,6 +21,10 @@ namespace miit::algebra
          */
         RandomGenerator(const int min, const int max);
 
+        /**
+         * @brief сгенерировать случайное число
+         * @return случайное число в диапазоне [min, max]
+         */
         int generate() override;
     };
 }
