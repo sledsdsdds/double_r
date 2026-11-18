@@ -4,13 +4,21 @@
 namespace miit::algebra
 {
     /**
-     * @brief задание 1: заменить максимальный элемент каждого столбца нулём
+     * @brief задание 1: заменить максимальный элемент каждого столбца нулем
      */
     class Task1 : public Exercise
     {
     public:
-        Task1(Matrix<int> matrix, Generator& generator);
+        /**
+         * @brief конструктор
+         * @param src ссылка на исходную матрицу
+         */
+        explicit Task1(Matrix& src) : Exercise(src) {}
 
-        void solve() override;
+        /**
+         * @brief выполнить задание 1
+         * @return атрица с замененными максимумами
+         */
+        Matrix solve() override;
     };
 }
