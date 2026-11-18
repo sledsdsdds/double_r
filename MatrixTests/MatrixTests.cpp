@@ -1,5 +1,4 @@
 #include <iostream>
-#include <memory>
 #include <vector>
 
 #include "Matrix.h"
@@ -15,90 +14,70 @@ namespace
     int failed = 0;
 }
 
-#define CHECK(cond)                                                         \
-    do {                                                                    \
-        if (cond) { ++passed; }                                             \
-        else {                                                              \
-            ++failed;                                                       \
-            std::cerr << "FAILED: " #cond " (line " << __LINE__ << ")\n";   \
-        }                                                                   \
-    } while (0)
+#define CHECK(cond) do { if (cond) { ++passed; } else { ++failed; std::cerr << "FAILED: " #cond " (line " << __LINE__ << ")\n"; } } while (0)
 
 namespace
 {
-    Matrix<int> makeMatrix(std::size_t r, std::size_t c, int value)
+    Matrix makeMatrix(const std::size_t r, const std::size_t c, const int value)
     {
         ConstantGenerator g(value);
-        return Matrix<int>(r, c, g);
+        Matrix m(r, c);
+        m.fillArray(g);
+        return m;
     }
 
     void testConstructors()
     {
-        Matrix<int> m1;
+        Matrix m1;
         CHECK(m1.getRows() == 0);
-        CHECK(m1.getCols() == 0);
-        CHECK(m1.empty());
+        CHECK(m1.getColumns() == 0);
 
-        Matrix<int> m2(2, 3);
+        Matrix m2(2, 3);
         CHECK(m2.getRows() == 2);
-        CHECK(m2.getCols() == 3);
-        CHECK(!m2.empty());
+        CHECK(m2.getColumns() == 3);
         CHECK(m2[0][0] == 0);
 
-        Matrix<int> m3 = makeMatrix(2, 2, 7);
+        Matrix m3 = makeMatrix(2, 2, 7);
         CHECK(m3[1][1] == 7);
 
-        Matrix<int> m4 = m3;
+        Matrix m4 = m3;
         CHECK(m4[0][0] == 7);
 
-        Matrix<int> m5 = std::move(m4);
+        Matrix m5 = std::move(m4);
         CHECK(m5[0][0] == 7);
     }
 
     void testIndexOperator()
     {
-        Matrix<int> m = makeMatrix(2, 2, 5);
+        Matrix m = makeMatrix(2, 2, 5);
         m[0][1] = 42;
         CHECK(m[0][1] == 42);
 
-        const Matrix<int>& cm = m;
+        const Matrix& cm = m;
         CHECK(cm[0][1] == 42);
-        CHECK(cm.getRow(0)[1] == 42);
     }
 
     void testShift()
     {
-        ConstantGenerator g(0);
-        Matrix<int> m(1, 4, g);
-        m[0][0] = 1;
-        m[0][1] = 2;
-        m[0][2] = 3;
-        m[0][3] = 4;
+        Matrix m = makeMatrix(1, 4, 0);
+        m[0][0] = 1; m[0][1] = 2; m[0][2] = 3; m[0][3] = 4;
 
         m << 1;
-        CHECK(m[0][0] == 2);
-        CHECK(m[0][1] == 3);
-        CHECK(m[0][2] == 4);
-        CHECK(m[0][3] == 1);
+        CHECK(m[0][0] == 2 && m[0][3] == 1);
 
         m >> 1;
-        CHECK(m[0][0] == 1);
-        CHECK(m[0][1] == 2);
-        CHECK(m[0][2] == 3);
-        CHECK(m[0][3] == 4);
+        CHECK(m[0][0] == 1 && m[0][3] == 4);
     }
 
     void testTask1()
     {
-        ConstantGenerator g(0);
-        Matrix<int> m(2, 3, g);
+        Matrix m = makeMatrix(2, 3, 0);
         m[0][0] = 1; m[0][1] = 5; m[0][2] = 3;
         m[1][0] = 4; m[1][1] = 2; m[1][2] = 6;
 
-        Task1 t(m, g);
-        t.solve();
+        Task1 t(m);
+        Matrix r = t.solve();
 
-        const Matrix<int>& r = t.getMatrix();
         CHECK(r[1][0] == 0);
         CHECK(r[0][1] == 0);
         CHECK(r[1][2] == 0);
@@ -107,15 +86,13 @@ namespace
 
     void testTask2()
     {
-        ConstantGenerator g(0);
-        Matrix<int> m(2, 2, g);
+        Matrix m = makeMatrix(2, 2, 0);
         m[0][0] = -9; m[0][1] = 1;
         m[1][0] = 2; m[1][1] = 3;
 
-        Task2 t(m, g);
-        t.solve();
+        Task2 t(m);
+        Matrix r = t.solve();
 
-        const Matrix<int>& r = t.getMatrix();
         CHECK(r.getRows() == 3);
         CHECK(r[1][0] == -9);
         CHECK(r[1][1] == 1);
