@@ -8,12 +8,15 @@ namespace miit::algebra
     class Generator
     {
     public:
+        /** @brief конструктор по умолчанию */
         Generator() = default;
+
+        /** @brief Виртуальный деструктор */
         virtual ~Generator() = default;
 
         /**
          * @brief сгенерировать очередное значение
-         * @note метод не const, т.к. меняет внутреннее состояние генератора
+         * @return сгенерированное целое число
          */
         virtual int generate() = 0;
     };
