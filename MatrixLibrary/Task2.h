@@ -4,13 +4,21 @@
 namespace miit::algebra
 {
     /**
-     * @brief задание 2: после всех строк, содержащих максимальный по модулю элемент, вставить первую строку
+     * @brief здание 2: вставить первую строку после всех строк с максимальным по модулю элементом
      */
     class Task2 : public Exercise
     {
     public:
-        Task2(Matrix<int> matrix, Generator& generator);
+        /**
+         * @brief конструктор
+         * @param src ссылка на исходную матрицу
+         */
+        explicit Task2(Matrix& src) : Exercise(src) {}
 
-        void solve() override;
+        /**
+         * @brief выполнить задание 1
+         * @return измененная матрица
+         */
+        Matrix solve() override;
     };
 }
