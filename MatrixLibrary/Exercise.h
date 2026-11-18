@@ -4,28 +4,27 @@
 namespace miit::algebra
 {
     /**
-     * @brief базовый класс задания, агрегирующий матрицу и генератор
+     * @brief базовый класс для выполнения заданий над матрицей
      */
     class Exercise
     {
     protected:
-        Matrix<int> matrix;
-        Generator& generator;
+        Matrix& source;
 
     public:
         /**
-         * @brief конструктор
-         * @param matrix матрица
-         * @param generator генератор
+         * @brief конструктор базового класса
+         * @param src ссылка на исходную матрицу
          */
-        Exercise(Matrix<int> matrix, Generator& generator);
+        explicit Exercise(Matrix& src) : source(src) {}
 
+        /** @brief виртуальный деструктор */
         virtual ~Exercise() = default;
 
-        /** @brief выполнить задание */
-        virtual void solve() = 0;
-
-        /** @brief Получить матрицу (только для чтения) */
-        const Matrix<int>& getMatrix() const;
+        /**
+         * @brief выполнить задание
+         * @return новая матрица с результатом
+         */
+        virtual Matrix solve() { return source; }
     };
 }
