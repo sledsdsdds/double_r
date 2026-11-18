@@ -1,282 +1,159 @@
 #pragma once
-
-#include <vector>
+#include <iostream>
 #include <string>
+#include <vector>
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
-#include <cstddef>
-
 #include "Generator.h"
 
 namespace miit::algebra
 {
     /**
-     * @brief шаблонный класс двумерного массива (матрицы)
-     * @tparam T тип хранимых элементов
-     *
-     * @note реализация шаблона полностью находится в заголовочном файле, т.к. компилятор должен видеть её при инстанцировании
+     * @brief класс для работы с двумерной матрицей (на основе std::vector)
      */
-    template <typename T>
     class Matrix
     {
     private:
-        std::vector<std::vector<T>> data;
-        std::size_t rows;
-        std::size_t cols;
+        size_t rows;
+        size_t columns;
+        std::vector<std::vector<int>> data;
 
     public:
-        /** @brief конструктор по умолчанию */
-        Matrix();
+        /** @brief конструктор по умолчанию (создает пустую матрицу 0x0) */
+        Matrix() : rows(0), columns(0) {}
 
         /**
-         * @brief конструктор с размерами (заполняет значениями по умолчанию)
-         * @param rows число строк
-         * @param cols число столбцов
+         * @brief конструктор с параметрами (заполняет нулями)
+         * @param r количество строк
+         * @param c количество столбцов
          */
-        Matrix(const std::size_t rows, std::size_t cols);
-
-        /**
-         * @brief конструктор с размерами и генератором
-         * @param rows число строк
-         * @param cols число столбцов
-         * @param generator генератор значений (меняется при заполнении)
-         */
-        Matrix(const std::size_t rows, std::size_t cols, Generator& generator);
+        Matrix(const size_t r, const size_t c) : rows(r), columns(c), data(r, std::vector<int>(c, 0)) {}
 
         /** @brief конструктор копирования */
         Matrix(const Matrix& other) = default;
-
         /** @brief конструктор перемещения */
         Matrix(Matrix&& other) noexcept = default;
-
         /** @brief деструктор */
         ~Matrix() = default;
-
         /** @brief оператор присваивания копированием */
         Matrix& operator=(const Matrix& other) = default;
-
         /** @brief оператор присваивания перемещением */
         Matrix& operator=(Matrix&& other) noexcept = default;
 
         /**
-         * @brief Оператор сравнения на равенство
-         * @param other другая матрица для сравнения
-         * @return true, если матрицы имеют одинаковый размер и одинаковые элементы
+         * @brief оператор сравнения на равенство
+         * @param other другая матрица
+         * @return true, если размеры и элементы совпадают
          */
-        bool operator==(const Matrix& other) const;
+        bool operator==(const Matrix& other) const { return data == other.data; }
 
         /**
-         * @brief Оператор сравнения на неравенство
-         * @param other другая матрица для сравнения
-         * @return true, если матрицы различаются по размеру или элементам
+         * @brief оператор сравнения на неравенство
+         * @param other другая матрица
+         * @return true, если матрицы различаются
          */
-        bool operator!=(const Matrix& other) const;
-
-        /**
-         * @brief циклический сдвиг элементов каждой строки влево
-         * @param shift величина сдвига
-         * @return ссылка на текущий объект
-         */
-        Matrix& operator<<(const std::size_t shift);
-
-        /**
-         * @brief циклический сдвиг элементов каждой строки вправо
-         * @param shift величина сдвига
-         * @return ссылка на текущий объект
-         */
-        Matrix& operator>>(const std::size_t shift);
+        bool operator!=(const Matrix& other) const { return !(*this == other); }
 
         /**
          * @brief доступ к строке по индексу (изменяемый)
          * @param index индекс строки
+         * @return ссылка на вектор строки
          */
-        std::vector<T>& operator[](const std::size_t index);
+        std::vector<int>& operator[](const size_t index) { return data.at(index); }
 
         /**
          * @brief доступ к строке по индексу (только для чтения)
          * @param index индекс строки
+         * @return константная ссылка на вектор строки
          */
-        const std::vector<T>& operator[](const std::size_t index) const;
+        const std::vector<int>& operator[](const size_t index) const { return data.at(index); }
 
-        /** @brief количество строк */
-        std::size_t getRows() const noexcept;
+        /** @brief получить количество строк */
+        size_t getRows() const { return rows; }
 
-        /** @brief количество столбцов */
-        std::size_t getCols() const noexcept;
-
-        /** @brief признак пустой матрицы */
-        bool empty() const noexcept;
-
-        /** @brief Строковое представление матрицы */
-        std::string toString() const;
+        /** @brief получить количество столбцов */
+        size_t getColumns() const { return columns; }
 
         /**
-         * @brief заполнить матрицу значениями из генератора
-         * @param generator генератор значений
+         * @brief заполнить матрицу значениями с помощью генератора
+         * @param generator ссылка на генератор
          */
-        void fill(Generator& generator);
+        void fillArray(const Generator& generator)
+        {
+            for (size_t i = 0; i < rows; ++i)
+                for (size_t j = 0; j < columns; ++j)
+                    data[i][j] = const_cast<Generator&>(generator).generate();
+        }
 
         /**
-         * @brief вставить строку после указанной позиции
-         * @param pos позиция (0..rows), после которой вставить
-         * @param row вставляемая строка
+         * @brief получить строковое представление матрицы
+         * @return строка с элементами матрицы
          */
-        void insertRowAfter(const std::size_t pos, const std::vector<T>& row);
+        std::string toString() const
+        {
+            std::ostringstream oss;
+            for (const auto& row : data)
+            {
+                for (int el : row) oss << el << ' ';
+                oss << '\n';
+            }
+            return oss.str();
+        }
 
         /**
-         * @brief получить строку по индексу (изменяемую)
-         * @param index индекс строки
+         * @brief вставить строку после указанного индекса
+         * @param rowIndex индекс строки, после которой вставляем
+         * @param newRow вектор новой строки
+         * @throws std::out_of_range если индекс выходит за пределы
          */
-        std::vector<T>& getRow(const std::size_t index);
+        void insertRowAfter(const size_t rowIndex, const std::vector<int>& newRow)
+        {
+            if (rowIndex >= rows) throw std::out_of_range("insertRowAfter: index out of range");
+            data.insert(data.begin() + rowIndex + 1, newRow);
+            rows++;
+        }
 
         /**
-         * @brief получить строку по индексу (только для чтения)
-         * @param index индекс строки
+         * @brief циклический сдвиг каждой строки влево
+         * @param shift величина сдвига
+         * @return Ссылка на текущую матрицу
          */
-        const std::vector<T>& getRow(const std::size_t index) const;
+        Matrix& operator<<(const size_t shift)
+        {
+            if (rows == 0 || columns == 0) return *this;
+            size_t s = shift % columns;
+            for (auto& row : data) std::rotate(row.begin(), row.begin() + s, row.end());
+            return *this;
+        }
+
+        /**
+         * @brief циклический сдвиг каждой строки вправо
+         * @param shift величина сдвига
+         * @return ссылка на текущую матрицу
+         */
+        Matrix& operator>>(const size_t shift)
+        {
+            if (rows == 0 || columns == 0) return *this;
+            size_t s = shift % columns;
+            for (auto& row : data) std::rotate(row.rbegin(), row.rbegin() + s, row.rend());
+            return *this;
+        }
+
+        /** @brief оператор вывода в поток (для тестов) */
+        friend std::ostream& operator<<(std::ostream& os, const Matrix& matrix)
+        {
+            os << matrix.toString();
+            return os;
+        }
+
+        /** @brief оператор ввода из потока */
+        friend std::istream& operator>>(std::istream& is, Matrix& matrix)
+        {
+            for (size_t i = 0; i < matrix.rows; ++i)
+                for (size_t j = 0; j < matrix.columns; ++j)
+                    is >> matrix.data[i][j];
+            return is;
+        }
     };
-
-    // ==================== Реализация ====================
-
-    template <typename T>
-    Matrix<T>::Matrix()
-        : rows(0), cols(0)
-    {
-    }
-
-    template <typename T>
-    Matrix<T>::Matrix(std::size_t rows, std::size_t cols)
-        : data(rows, std::vector<T>(cols, T{})), rows(rows), cols(cols)
-    {
-    }
-
-    template <typename T>
-    Matrix<T>::Matrix(std::size_t rows, std::size_t cols, Generator& generator)
-        : data(rows, std::vector<T>(cols, T{})), rows(rows), cols(cols)
-    {
-        fill(generator);
-    }
-
-    template <typename T>
-    bool Matrix<T>::operator==(const Matrix& other) const
-    {
-        return data == other.data; // std::vector сам умеет сравнивать свои элементы
-    }
-
-    template <typename T>
-    bool Matrix<T>::operator!=(const Matrix& other) const
-    {
-        return !(*this == other);
-    }
-
-    template <typename T>
-    Matrix<T>& Matrix<T>::operator<<(std::size_t shift)
-    {
-        if (rows == 0 || cols == 0)
-        {
-            return *this;
-        }
-        shift %= cols;
-        for (std::vector<T>& row : data)
-        {
-            std::rotate(row.begin(), row.begin() + shift, row.end());
-        }
-        return *this;
-    }
-
-    template <typename T>
-    Matrix<T>& Matrix<T>::operator>>(std::size_t shift)
-    {
-        if (rows == 0 || cols == 0)
-        {
-            return *this;
-        }
-        shift %= cols;
-        for (std::vector<T>& row : data)
-        {
-            std::rotate(row.rbegin(), row.rbegin() + shift, row.rend());
-        }
-        return *this;
-    }
-
-    template <typename T>
-    std::vector<T>& Matrix<T>::operator[](std::size_t index)
-    {
-        return data.at(index);
-    }
-
-    template <typename T>
-    const std::vector<T>& Matrix<T>::operator[](std::size_t index) const
-    {
-        return data.at(index);
-    }
-
-    template <typename T>
-    std::size_t Matrix<T>::getRows() const noexcept
-    {
-        return rows;
-    }
-
-    template <typename T>
-    std::size_t Matrix<T>::getCols() const noexcept
-    {
-        return cols;
-    }
-
-    template <typename T>
-    bool Matrix<T>::empty() const noexcept
-    {
-        return rows == 0 || cols == 0;
-    }
-
-    template <typename T>
-    std::string Matrix<T>::toString() const
-    {
-        std::ostringstream oss;
-        for (const std::vector<T>& row : data)
-        {
-            for (const T& el : row)
-            {
-                oss << el << ' ';
-            }
-            oss << '\n';
-        }
-        return oss.str();
-    }
-
-    template <typename T>
-    void Matrix<T>::fill(Generator& generator)
-    {
-        for (std::vector<T>& row : data)
-        {
-            for (T& el : row)
-            {
-                el = static_cast<T>(generator.generate());
-            }
-        }
-    }
-
-    template <typename T>
-    void Matrix<T>::insertRowAfter(std::size_t pos, const std::vector<T>& row)
-    {
-        if (pos > rows)
-        {
-            throw std::out_of_range("insertRowAfter: pos > rows");
-        }
-        data.insert(data.begin() + static_cast<std::ptrdiff_t>(pos), row);
-        ++rows;
-    }
-
-    template <typename T>
-    std::vector<T>& Matrix<T>::getRow(std::size_t index)
-    {
-        return data.at(index);
-    }
-
-    template <typename T>
-    const std::vector<T>& Matrix<T>::getRow(std::size_t index) const
-    {
-        return data.at(index);
-    }
 }
