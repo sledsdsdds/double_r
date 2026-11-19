@@ -8,9 +8,7 @@ namespace miit::algebra
     class Generator
     {
     public:
-        /** @brief конструктор по умолчанию */
-        Generator() = default;
-
+        
         /** @brief Виртуальный деструктор */
         virtual ~Generator() = default;
 
