@@ -14,7 +14,7 @@
 
 using namespace miit::algebra;
 
-enum class FillMode { RANDOM = 1, KEYBOARD = 2, CONSTANT = 3, ZEROS = 4 };
+enum FillMode { RANDOM = 1, KEYBOARD = 2, CONSTANT = 3, ZEROS = 4 };
 
 namespace
 {
@@ -33,7 +33,7 @@ namespace
     }
 }
 
-int main() // <--- ВОТ ОНА, ФУНКЦИЯ MAIN!
+int main()
 {
     SetConsoleCP(65001);
     SetConsoleOutputCP(65001);
@@ -47,30 +47,36 @@ int main() // <--- ВОТ ОНА, ФУНКЦИЯ MAIN!
         Matrix original(rows, cols);
 
         std::cout << "\nВыберите способ заполнения:\n"
-            << "  1 - случайные числа\n"
-            << "  2 - ввод с клавиатуры\n"
-            << "  3 - константное значение\n"
-            << "  4 - нулями\n"
+            << "  " << RANDOM << " - случайные числа\n"
+            << "  " << KEYBOARD << " - ввод с клавиатуры\n"
+            << "  " << CONSTANT << " - константное значение\n"
+            << "  " << ZEROS << " - нулями\n"
             << "Ваш выбор: ";
 
         int choice = 0;
         std::cin >> choice;
 
-        switch (static_cast<FillMode>(choice))
+        switch (choice)
         {
-        case FillMode::RANDOM:
+        case RANDOM:
         {
-            RandomGenerator gen(-50, 50);
+            int minVal = 0, maxVal = 0;
+            std::cout << "Введите минимум диапазона: ";
+            std::cin >> minVal;
+            std::cout << "Введите максимум диапазона: ";
+            std::cin >> maxVal;
+            
+            RandomGenerator gen(minVal, maxVal);
             original.fillArray(gen);
             break;
         }
-        case FillMode::KEYBOARD:
+        case KEYBOARD:
         {
             IStreamGenerator gen(std::cin);
             original.fillArray(gen);
             break;
         }
-        case FillMode::CONSTANT:
+        case CONSTANT:
         {
             int c = 0;
             std::cout << "Введите константу: ";
@@ -79,16 +85,19 @@ int main() // <--- ВОТ ОНА, ФУНКЦИЯ MAIN!
             original.fillArray(gen);
             break;
         }
-        case FillMode::ZEROS:
+        case ZEROS:
         {
             ConstantGenerator gen(0);
             original.fillArray(gen);
             break;
         }
         default:
-            RandomGenerator gen(-50, 50);
+        {
+            std::cout << "Неверный выбор. Заполняем нулями.\n";
+            ConstantGenerator gen(0);
             original.fillArray(gen);
             break;
+        }
         }
 
         std::cout << "\nИсходная матрица:\n" << original.toString();
